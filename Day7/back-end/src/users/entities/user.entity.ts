@@ -21,6 +21,11 @@ export class User {
   @Column()
   age: number;
 
+  @Column({
+    default: 'no-image.jpeg',
+  })
+  image: string;
+
   @OneToMany(() => Todo, (todo) => todo.createdBy)
   todos: Todo[];
 }

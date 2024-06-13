@@ -22,7 +22,7 @@ export class User {
   age: number;
 
   @Column({
-    default: 'no-image.jpeg',
+    default: 'no-image.png',
   })
   image: string;
 

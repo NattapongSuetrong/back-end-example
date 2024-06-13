@@ -19,6 +19,7 @@ const loginStore = useLoginStore()
 <style scoped>
   .user_img{
     width: 50px;
+    height: 50px;
     border-radius: 50%;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
   }

@@ -15,10 +15,21 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     const payload = { id: user.id, login: user.login };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...result } = user;
     return {
       user: result,
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+  async uploadFile(filename: string, id: number) {
+    const user = await this.usersService.update(id, { image: filename });
+    return user;
+  }
+  async getProfile(id: number) {
+    const user = await this.usersService.findOne(id);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = user;
+    return result;
   }
 }

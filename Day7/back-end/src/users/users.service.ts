@@ -45,4 +45,17 @@ export class UsersService {
 
     return this.usersRepository.delete(user);
   }
+
+  async uploadFile(filename: string, id: number) {
+    const user = await this.usersRepository.findOneByOrFail({ id: id });
+    user.image = filename;
+    return this.usersRepository.save(user);
+  }
+
+  async getProfile(id: number) {
+    const user = await this.usersRepository.findOneByOrFail({ id: id });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = user;
+    return result;
+  }
 }

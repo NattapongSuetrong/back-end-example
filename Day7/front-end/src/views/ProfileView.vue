@@ -1,76 +1,125 @@
 <script setup>
-    import { useLoginStore } from '../stores/login.js'
-    import { ref } from 'vue'
-    import http from '../services/http.js'
+import { ref } from 'vue'
+import http from '../services/http'
+import { useLoginStore } from '../stores/login.js'
 
-    const loginStore = useLoginStore()
-    const fileInput = ref(null)
-    const uploadStatus = ref('')
+const fileInput = ref(null)
+const uploadStatus = ref('')
+const loginStore = useLoginStore()
 
-    async function uploadFile () {
-        console.log(fileInput.value.files[0])
-        const file = fileInput.value.files[0]
-        if(!file) {
-            uploadStatus.value = 'No file selected.'
-            return
-        }
-        uploadStatus.value = ''
-        const formData = new FormData()
-        formData.append('file', file)
-        
-        try{
-            const res = await http.post('users/upload', formData, {
-                headers: {
-                    'Content-type': 'multipart/form-data'
-                }
-            })
-            console.log(res.data)
-        } catch (err){
-            console.log(err)
-        }
-    }
+async function uploadFile() {
+  console.log(fileInput.value.files[0])
+  const file = fileInput.value.files[0]
+  if (!file) {
+    uploadStatus.value = 'No file selected.'
+    return
+  }
+  uploadStatus.value = ''
+  const formData = new FormData()
+  formData.append('file', file)
+  try {
+    const res = await http.post('/auth/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    console.log(res.data)
+    uploadStatus.value = `File uploaded successfully: ${res.data.filename}`
+    loginStore.updateLogin()
+  } catch (err) {
+    console.log(err)
+    uploadStatus.value = 'File upload failed.'
+  }
+}
 </script>
 
 <template>
     <div class="container">
-        <h1>Profile</h1>
-        <div>
-            <img
-                :src="'http://localhost:3000/uploads/' + loginStore.currentUser.image"
-                alt="Profile image"
-                class="user_img"
-            />
-            <form @submit.prevent="uploadFile()">
-                <input type="file" ref="fileInput"> 
-                <button type="submit">upload</button>
-                <span>{{ uploadStatus }}</span>
-            </form>
+      <h1>User Profile</h1>
+      <div class="profile-details">
+        <img
+          :src="'http://localhost:3000/uploads/' + loginStore.currentUser.image"
+          alt="Profile image"
+          class="profile-img"
+        />
+        <div class="profile-info">
+          <p><strong>ID:</strong> {{ loginStore.currentUser.id }}</p>
+          <p><strong>Login:</strong> {{ loginStore.currentUser.login }}</p>
+          <p><strong>Name:</strong> {{ loginStore.currentUser.name }}</p>
+          <p><strong>Gender:</strong> {{ loginStore.currentUser.gender }}</p>
+          <p><strong>Age:</strong> {{ loginStore.currentUser.age }}</p>
         </div>
-        <div>{{ loginStore.currentUser }}</div>
+      </div>
+      <form @submit.prevent="uploadFile" class="upload-form">
+        <input type="file" ref="fileInput" />
+        <button type="submit">Upload</button>
+        <span>{{ uploadStatus }}</span>
+      </form>
     </div>
-    
 </template>
 
 <style scoped>
-.container {
-  max-width: 600px;
+  .container {
+  max-width: 500px;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f4f9;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
+  }
 
-h1 {
+  h1 {
   text-align: center;
   margin-bottom: 20px;
   color: #333;
-}
-
-  .user_img{
-    width: 50px;
+  }
+  
+  .profile-details {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .profile-img {
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+    margin-bottom: 20px;
+  }
+  
+  .profile-info p {
+    margin: 5px 0;
+    color: #333;
+  }
+  
+  .upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  input[type="file"] {
+    margin: 10px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  span {
+    margin-top: 10px;
+    color: #333;
   }
 </style>
+  

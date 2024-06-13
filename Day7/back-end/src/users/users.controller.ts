@@ -34,6 +34,11 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @Get('profile')
+  getProfile(@Request() req) {
+    return this.usersService.getProfile(req.user.id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
@@ -67,6 +72,6 @@ export class UsersController {
   uploadFile(@UploadedFile() file: Express.Multer.File, @Request() req) {
     console.log(req.user);
     console.log(file);
-    return { message: 'File uploaded successfully', filename: file.filename };
+    return this.usersService.uploadFile(file.filename, req.user.id);
   }
 }
